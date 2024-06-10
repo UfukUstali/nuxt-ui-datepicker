@@ -59,7 +59,12 @@ function isEdge(day: Dayjs) {
     }
     case "range": {
       return (
-        day.isSame((props.highlight as [Date, Date])[0], "day") ? "start"
+        (
+          day.isSame((props.highlight as [Date, Date])[0], "day") &&
+            day.isSame((props.highlight as [Date, Date])[1], "day")
+        ) ?
+          "both"
+        : day.isSame((props.highlight as [Date, Date])[0], "day") ? "start"
         : day.isSame((props.highlight as [Date, Date])[1], "day") ? "end"
         : false
       );
@@ -153,10 +158,6 @@ function clicked(day: Dayjs) {
     }
     case "range": {
       if (temp.value) {
-        if (day.isSame(temp.value[0], "day")) {
-          temp.value = undefined;
-          break;
-        }
         if (day.isBefore(temp.value[0])) {
           // @ts-expect-error emitHighlight always expects a [Date, Date] when pickerMode is range
           props.emitHighlight([day.toDate(), temp.value[0]]);
